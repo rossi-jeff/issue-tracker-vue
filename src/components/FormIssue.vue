@@ -2,6 +2,20 @@
   <div>
       <b-row class="m-4">
         <b-col>
+          <div>
+            <strong>Project</strong>
+          </div>
+          <b-form-select
+            v-model="issue.ProjectId" 
+            :options="projects"
+            :disabled="!enabled"
+            style="width: 100%"
+            class="p-1 my-1"
+          ></b-form-select>
+        </b-col>
+      </b-row>
+      <b-row class="m-4">
+        <b-col>
           <b-input-group>
             <b-input-group-prepend>
               <b-input-group-text>
@@ -31,6 +45,7 @@
             :options="PriorityArray"
             :disabled="!enabled"
             style="width: 90%"
+            class="p-1 my-1"
           ></b-form-select>
         </b-col>
         <b-col>
@@ -42,6 +57,7 @@
             :options="StatusArray"
             :disabled="!enabled"
             style="width: 90%"
+            class="p-1 my-1"
           ></b-form-select>
         </b-col>
         <b-col>
@@ -53,6 +69,7 @@
             :options="IssueTypeArray"
             :disabled="!enabled"
             style="width: 90%"
+            class="p-1 my-1"
           ></b-form-select>
         </b-col>
         <b-col>
@@ -64,6 +81,7 @@
             :options="ComplexityArray"
             :disabled="!enabled"
             style="width: 90%"
+            class="p-1 my-1"
           ></b-form-select>
         </b-col>
         <b-col>
@@ -75,6 +93,7 @@
             :options="assigned"
             :disabled="!enabled"
             style="width: 90%"
+            class="p-1 my-1"
           ></b-form-select>
         </b-col>
       </b-row>
@@ -91,6 +110,7 @@ import {
 } from '../lib/options';
 import { userSort } from '../lib/user-sort'
 import { FullName } from '../lib/fullname'
+import { projectSort } from '../lib/project-sort'
 
 export default {
   props: ['issue','enabled'],
@@ -101,6 +121,7 @@ export default {
     PriorityArray,
     StatusArray,
     assigned: [],
+    projects: [],
   }),
   methods: {
     async getUsers() {
@@ -116,9 +137,23 @@ export default {
         })
       }
     },
+    async getProjects() {
+      let results = await this.api.getData('project', {}, buildHeaders({}))
+      results.sort(projectSort)
+      this.projects = [
+        { value: null, text: ''}
+      ]
+      for (let project of results) {
+        this.projects.push({
+          value: project.Id,
+          text: project.Name
+        })
+      }
+    }
   },
   created() {
     this.getUsers()
+    this.getProjects()
   }
 }
 </script>

@@ -1,6 +1,7 @@
 <template>
   <div>
     <b-alert 
+      fade
       class="m-2" 
       :show="alert.visible" 
       :variant="alert.variant"

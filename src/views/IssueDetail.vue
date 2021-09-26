@@ -8,7 +8,7 @@
         <FormIssue :issue="issue" :enabled="session.signedIn" />
         <b-row class="m-4">
           <b-col>
-            <b-button v-if="session.signedIn" variant="outline-success">
+            <b-button v-if="session.signedIn" variant="outline-success" @click="update">
               Update
               <b-icon icon="check"></b-icon>
             </b-button>
@@ -68,6 +68,7 @@ import FormComment from '@/components/FormComment'
 import CommentCard from '@/components/CommentCard'
 import Breadcrumb from '@/components/Breadcrumb'
 import { buildHeaders, ApiFetch } from '../lib/api-fetch'
+import { FlashHandler } from '../lib/flash-handler'
 
 export default {
   components: {
@@ -78,6 +79,7 @@ export default {
   },
   data: () => ({
     api: new ApiFetch(),
+    flash: new FlashHandler(),
     trail: [
       {
         text: 'Home',
@@ -96,6 +98,7 @@ export default {
       Priority: '',
       Complexity: '',
       AssignedToId: '',
+      ProjectId: '',
       Comments: []
     },
     comment: {
@@ -132,6 +135,20 @@ export default {
       this.comment.Details = ''
       this.commentListVisible = true
       this.loadIssue()
+    },
+    async update() {
+      this.$store.dispatch('loader/show')
+      const payload = JSON.parse(JSON.stringify(this.issue))
+      delete payload.Comments
+      try {
+        const results = await this.api.patchData(`issue/${this.uuid}`,payload, buildHeaders(this.session))
+        this.flash.success(`Issue ${this.issue.Title} updated`)
+        this.initial = results
+        this.issue = results
+      } catch (error) {
+        this.flash.error(`Error: ${error.message} saving issue`)
+      }
+      this.$store.dispatch('loader/hide')
     }
   },
   created() {
@@ -143,6 +160,9 @@ export default {
     session() {
       return this.$store.state.session;
     }
+  },
+  mounted() {
+    this.flash.setStore(this.$store)
   }
 }
 </script>

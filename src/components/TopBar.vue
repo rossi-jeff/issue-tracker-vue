@@ -12,6 +12,7 @@
         <b-navbar-nav class="ms-auto">  
 
           <b-nav-item-dropdown id="menu" text="menu" variant="info" class="m-md-2 mr-2">
+            <b-dropdown-item to="/projects">Projects</b-dropdown-item>
             <b-dropdown-item to="/issues">Issues</b-dropdown-item>
             <b-dropdown-item to="/users">Users</b-dropdown-item>
           </b-nav-item-dropdown>

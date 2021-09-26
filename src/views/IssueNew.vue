@@ -27,6 +27,7 @@ import FormIssue from '@/components/FormIssue'
 import { buildHeaders, ApiFetch } from '../lib/api-fetch'
 import { RemoveBlanks } from '../lib/RemoveBlanks'
 import Breadcrumb from '@/components/Breadcrumb'
+import { FlashHandler } from '../lib/flash-handler'
 
 export default {
   components: {
@@ -35,6 +36,7 @@ export default {
   },
   data: () => ({
     api: new ApiFetch(),
+    flash: new FlashHandler(),
     trail: [
       {
         text: 'Home',
@@ -56,8 +58,10 @@ export default {
       Status: 'New',
       Priority: '',
       Complexity: '',
-      AssignedToId: ''
+      AssignedToId: '',
+      ProjectId: ''
     },
+    projects: [],
     issue: {}
   }),
   methods: {
@@ -67,10 +71,15 @@ export default {
     async save() {
       this.$store.dispatch('loader/show')
       const payload = RemoveBlanks(this.issue)
-      const result = await this.api.postData('issue', payload, buildHeaders(this.session))
-      setTimeout(() => {
-        this.$router.push(`/issues/${result.UUID}`);
-      }, 500);
+      try {
+        const result = await this.api.postData('issue', payload, buildHeaders(this.session))
+        this.flash.success(`Issue: ${payload.Title} saved`)
+        setTimeout(() => {
+          this.$router.push(`/issues/${result.UUID}`);
+        }, 500);
+      } catch (error) {
+       this.flash.error(`Error: ${error.message} saving issue`) 
+      }
       this.$store.dispatch('loader/hide')
     }
   },
@@ -82,6 +91,9 @@ export default {
     session() {
       return this.$store.state.session;
     }
+  },
+  mounted() {
+    this.flash.setStore(this.$store)
   }
 }
 </script>

@@ -45,6 +45,7 @@
                 :options="PriorityArray"
                 @change="updateFilters"
                 style="width: 90%"
+                class="p-1 my-1"
               ></b-form-select>
             </b-col>
             <b-col>
@@ -56,6 +57,7 @@
                 :options="StatusArray"
                 @change="updateFilters"
                 style="width: 90%"
+                class="p-1 my-1"
               ></b-form-select>
             </b-col>
             <b-col>
@@ -67,6 +69,7 @@
                 :options="IssueTypeArray"
                 @change="updateFilters"
                 style="width: 90%"
+                class="p-1 my-1"
               ></b-form-select>
             </b-col>
             <b-col>
@@ -78,6 +81,7 @@
                 :options="ComplexityArray"
                 @change="updateFilters"
                 style="width: 90%"
+                class="p-1 my-1"
               ></b-form-select>
             </b-col>
             <b-col>
@@ -89,6 +93,7 @@
                 :options="authors"
                 @change="updateFilters"
                 style="width: 90%"
+                class="p-1 my-1"
               ></b-form-select>
             </b-col>
             <b-col>
@@ -100,6 +105,7 @@
                 :options="assigned"
                 @change="updateFilters"
                 style="width: 90%"
+                class="p-1 my-1"
               ></b-form-select>
             </b-col>
             <b-col class="py-2">

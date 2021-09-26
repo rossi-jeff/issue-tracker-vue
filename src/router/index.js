@@ -58,6 +58,30 @@ const routes = [
     // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "user_detail" */ '../views/UserDetail.vue')
   },
+  {
+    path: '/projects',
+    name: 'Projects',
+    // route level code-splitting
+    // this generates a separate chunk (projects.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "projects" */ '../views/Projects.vue')
+  },
+  {
+    path: '/projects/new',
+    name: 'ProjectNew',
+    // route level code-splitting
+    // this generates a separate chunk (project_new.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "project_new" */ '../views/ProjectNew.vue')
+  },
+  {
+    path: '/projects/:uuid',
+    name: 'ProjectDetail',
+    // route level code-splitting
+    // this generates a separate chunk (project_detail.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "project_detail" */ '../views/ProjectDetail.vue')
+  },
 ]
 
 const router = new VueRouter({
