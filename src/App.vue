@@ -1,28 +1,44 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+  <b-overlay id="loader" spinner-variant="primary" :show="loader.visible">
+    <div id="app">
+      <TopBar />
+      <FlashAlert />
+      <router-view/>
+    </div>
+  </b-overlay>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import TopBar from '@/components/TopBar'
+import FlashAlert from '@/components/FlashAlert'
 
 export default {
-  name: 'App',
   components: {
-    HelloWorld
+    TopBar,
+    FlashAlert
+  },
+  computed: {
+    loader() {
+      return this.$store.state.loader;
+    }
+  },
+  watch: {
+    $route () {
+      this.$store.dispatch('loader/hide')
+    }
   }
 }
 </script>
 
 <style>
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+  margin-top: 5em;
+}
+.vee-validate-error {
+  color: red;
+  font-weight: bold;
+}
+input[aria-invalid="true"] {
+  border-color: red;
 }
 </style>
