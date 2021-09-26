@@ -2,8 +2,17 @@
   <div>
     <b-card  border-variant="dark" header-bg-variant="light" class="mx-2 mb-2" :header="issue.Title">
 
-      <b-card-text>
+      <b-card-text v-if="issue.Project">
         <b-row>
+          <b-col>
+            <strong class="mr-6">Project</strong>
+            {{ issue.Project.Name }}
+          </b-col>
+        </b-row>
+      </b-card-text>
+
+      <b-card-text>
+        <b-row cols="1" cols-sm="2" cols-md="4" cols-lg="4" cols-xl="4">
           <b-col>
             <strong class="mr-6">Priority</strong>
             {{ issue.Priority }}
@@ -27,7 +36,7 @@
 
 
       <b-card-text>
-        <b-row>
+        <b-row cols="1" cols-sm="2" cols-md="3" cols-lg="3" cols-xl="3">
           <b-col>
             <strong class="mr-6">Created</strong>
             {{ issue.Created }}
