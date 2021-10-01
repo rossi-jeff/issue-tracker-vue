@@ -1,6 +1,17 @@
 <template lang="html">
   <div class="form-time-clock">
-    <b-row class="m-4">
+    <b-row class="m-4" cols="1" cols-sm="1" cols-md="2" cols-lg="3" cols-xl="3">
+      <b-col>
+        <div>
+          <strong>User</strong>
+        </div>
+        <b-form-select
+          v-model="timeclock.UserId"
+          :options="options.users"
+          class="p-1 my-1"
+          style="width: 100%"
+        ></b-form-select>
+      </b-col>
       <b-col>
         <div>
           <strong>Project</strong>
@@ -28,7 +39,7 @@
         ></b-form-select>
       </b-col>
     </b-row>
-    <b-row class="m-4">
+    <b-row class="m-4" cols="1" cols-sm="1" cols-md="2" cols-lg="4" cols-xl="4">
       <b-col>
         <div>
           <strong>Start Date</strong>

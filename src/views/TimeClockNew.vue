@@ -42,6 +42,8 @@ import { buildHeaders, ApiFetch } from "../lib/api-fetch";
 import Breadcrumb from "@/components/Breadcrumb";
 import { FlashHandler } from "../lib/flash-handler";
 import FormTimeClock from "@/components/FormTimeClock";
+import { FullName } from "../lib/fullname";
+import { userSort } from "../lib/user-sort";
 
 export default {
   components: {
@@ -79,13 +81,16 @@ export default {
     },
     projects: [],
     issues: [],
+    users: [],
     options: {
       projects: [],
-      issues: []
+      issues: [],
+      users: []
     },
     count: {
       projects: 0,
-      issues: 0
+      issues: 0,
+      users: 0
     }
   }),
   methods: {
@@ -130,6 +135,28 @@ export default {
         });
       }
       this.count.issues = results.length;
+    },
+    async getUsers() {
+      let results = await this.api.getData(
+        "user",
+        {},
+        buildHeaders(this.session)
+      );
+      this.users = results;
+      this.users.sort(userSort);
+      this.options.users = [
+        {
+          value: null,
+          text: ""
+        }
+      ];
+      for (let user of this.users) {
+        this.options.users.push({
+          value: user.Id,
+          text: FullName(user.Name)
+        });
+      }
+      this.count.users = results.length;
     },
     projectChanged() {
       this.options.issues = [
@@ -176,6 +203,7 @@ export default {
   created() {
     this.getProjects();
     this.getIssues();
+    this.getUsers();
   },
   computed: {
     session() {

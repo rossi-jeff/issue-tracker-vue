@@ -20,7 +20,9 @@
       <b-collapse v-model="tableVisible" id="time-clock-collapse">
         <b-table sticky-header striped hover :fields="fields" :items="items">
           <template #cell(uuid)="data">
-            <a :href="`/time_clock/${data.value}`">EDIT</a>
+            <b-button :to="`/time_clock/${data.value}`" size="sm">
+              <b-icon icon="pencil-square"></b-icon>
+            </b-button>
           </template>
         </b-table>
       </b-collapse>

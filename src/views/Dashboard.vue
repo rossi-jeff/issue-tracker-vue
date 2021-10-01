@@ -88,9 +88,14 @@
 <script>
 import DashColumn from "@/components/DashColumn";
 import Breadcrumb from "@/components/Breadcrumb";
-import { buildHeaders, ApiFetch } from "../lib/api-fetch";
+import {
+  buildHeaders,
+  ApiFetch
+} from "../lib/api-fetch";
 import FormModalIssue from "../components/FormModalIssue";
-import { FlashHandler } from "../lib/flash-handler";
+import {
+  FlashHandler
+} from "../lib/flash-handler";
 
 export default {
   components: {
@@ -101,8 +106,7 @@ export default {
   data: () => ({
     flash: new FlashHandler(),
     api: new ApiFetch(),
-    trail: [
-      {
+    trail: [{
         text: "Home",
         href: "/"
       },
@@ -137,8 +141,7 @@ export default {
       this.$store.dispatch("loader/show");
       this.issues = [];
       const results = await this.api.getData(
-        "issue",
-        {},
+        "issue", {},
         buildHeaders(this.session)
       );
       this.issues = results;
@@ -173,7 +176,10 @@ export default {
       }
     },
     handleDrop(event) {
-      const { uuid, status } = event;
+      const {
+        uuid,
+        status
+      } = event;
       let idx, issue, from;
       idx = this.columns.New.findIndex(i => i.UUID == uuid);
       if (idx != -1) {
@@ -250,7 +256,9 @@ export default {
     },
     async handleOk(ev) {
       ev.preventDefault();
-      const { issue } = this.editor;
+      const {
+        issue
+      } = this.editor;
       const updated = await this.updateIssue(issue);
 
       const idx = this.issues.findIndex(i => i.UUID == updated.UUID);
@@ -277,7 +285,7 @@ export default {
 
 <style lang="css">
 .dash-column .dash-column-body {
-  height: 350px;
+  height: 400px;
   overflow-y: auto;
 }
 </style>
