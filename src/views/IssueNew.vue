@@ -1,33 +1,40 @@
 <template>
-  <div class="new-issue">
+<div class="new-issue">
 
-    <Breadcrumb :trail="trail" />
-    
-    <b-card border-variant="dark" header-bg-variant="light" header="New Issue" class="m-2">
-      <b-card-text>
-        <FormIssue :issue="issue" :enabled="session.signedIn" />
-        <b-row class="m-4">
-          <b-col>
-            <b-button v-if="session.signedIn" variant="outline-success" @click="save">
-              Save
-              <b-icon icon="check"></b-icon>
-            </b-button>
-            <b-alert show v-if="!session.signedIn" variant="warning">
-              You must be signed in to create an issue
-            </b-alert>
-          </b-col>
-        </b-row>
-      </b-card-text>
-    </b-card>
-  </div>
+  <Breadcrumb :trail="trail" />
+
+  <b-card border-variant="dark" header-bg-variant="light" header="New Issue" class="m-2">
+    <b-card-text>
+      <FormIssue :issue="issue" :enabled="session.signedIn" />
+      <b-row class="m-4">
+        <b-col>
+          <b-button v-if="session.signedIn" variant="outline-success" @click="save">
+            Save
+            <b-icon icon="check"></b-icon>
+          </b-button>
+          <b-alert show v-if="!session.signedIn" variant="warning">
+            You must be signed in to create an issue
+          </b-alert>
+        </b-col>
+      </b-row>
+    </b-card-text>
+  </b-card>
+</div>
 </template>
 
 <script>
 import FormIssue from '@/components/FormIssue'
-import { buildHeaders, ApiFetch } from '../lib/api-fetch'
-import { RemoveBlanks } from '../lib/RemoveBlanks'
+import {
+  buildHeaders,
+  ApiFetch
+} from '../lib/api-fetch'
+import {
+  RemoveBlanks
+} from '../lib/RemoveBlanks'
 import Breadcrumb from '@/components/Breadcrumb'
-import { FlashHandler } from '../lib/flash-handler'
+import {
+  FlashHandler
+} from '../lib/flash-handler'
 
 export default {
   components: {
@@ -37,8 +44,7 @@ export default {
   data: () => ({
     api: new ApiFetch(),
     flash: new FlashHandler(),
-    trail: [
-      {
+    trail: [{
         text: 'Home',
         href: '/'
       },
@@ -78,14 +84,13 @@ export default {
           this.$router.push(`/issues/${result.UUID}`);
         }, 500);
       } catch (error) {
-       this.flash.error(`Error: ${error.message} saving issue`) 
+        this.flash.error(`Error: ${error.message} saving issue`)
       }
       this.$store.dispatch('loader/hide')
     }
   },
   created() {
     this.reset()
-    console.log(this.session)
   },
   computed: {
     session() {

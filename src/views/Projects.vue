@@ -1,10 +1,8 @@
 <template>
 <div class="projects">
-
   <Breadcrumb :trail="trail" />
 
   <b-card header="Projects" border-variant="dark" header-bg-variant="light" class="m-2">
-
     <b-button to="/projects/new" size="sm" variant="outline-success" class="mx-2">
       <b-icon icon="plus-circle"></b-icon>
       New Project
@@ -12,13 +10,11 @@
 
     <strong class="mx-2">Showing:</strong>
     {{ count }}
-
   </b-card>
 
   <div style="max-height: 500px; overflow-y: auto;">
     <ProjectCard v-for="project of projects" :key="project.Id" :project="project" />
   </div>
-
 </div>
 </template>
 
@@ -26,9 +22,9 @@
 import {
   buildHeaders,
   ApiFetch
-} from '../lib/api-fetch'
-import Breadcrumb from '@/components/Breadcrumb'
-import ProjectCard from '@/components/ProjectCard'
+} from "../lib/api-fetch";
+import Breadcrumb from "@/components/Breadcrumb";
+import ProjectCard from "@/components/ProjectCard";
 
 export default {
   components: {
@@ -38,12 +34,12 @@ export default {
   data: () => ({
     api: new ApiFetch(),
     trail: [{
-        text: 'Home',
-        href: '/'
+        text: "Home",
+        href: "/"
       },
       {
-        text: 'Projects',
-        href: '/projects'
+        text: "Projects",
+        href: "/projects"
       }
     ],
     projects: [],
@@ -51,16 +47,21 @@ export default {
   }),
   methods: {
     async getProjects() {
-      this.$store.dispatch('loader/show')
-      const results = await this.api.getData('project', {}, buildHeaders({}))
-      console.log(results)
-      this.projects = results
-      this.count = results.length
-      this.$store.dispatch('loader/hide')
+      this.$store.dispatch("loader/show");
+      const results = await this.api.getData("project", {}, buildHeaders(this.session));
+      console.log(results);
+      this.projects = results;
+      this.count = results.length;
+      this.$store.dispatch("loader/hide");
     }
   },
   created() {
-    this.getProjects()
+    this.getProjects();
+  },
+  computed: {
+    session() {
+      return this.$store.state.session;
+    }
   }
-}
+};
 </script>

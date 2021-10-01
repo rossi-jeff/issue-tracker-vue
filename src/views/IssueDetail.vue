@@ -1,14 +1,22 @@
 <template>
   <div class="issue-detail">
-
     <Breadcrumb :trail="trail" />
 
-    <b-card border-variant="dark" header-bg-variant="light" header="Edit Issue" class="m-2">
+    <b-card
+      border-variant="dark"
+      header-bg-variant="light"
+      header="Edit Issue"
+      class="m-2"
+    >
       <b-card-text>
         <FormIssue :issue="issue" :enabled="session.signedIn" />
         <b-row class="m-4">
           <b-col>
-            <b-button v-if="session.signedIn" variant="outline-success" @click="update">
+            <b-button
+              v-if="session.signedIn"
+              variant="outline-success"
+              @click="update"
+            >
               Update
               <b-icon icon="check"></b-icon>
             </b-button>
@@ -21,10 +29,21 @@
     </b-card>
 
     <div v-if="session.signedIn">
-      <b-card no-body border-variant="dark" header-bg-variant="light" class="m-2" header-tag="header">
-
+      <b-card
+        no-body
+        border-variant="dark"
+        header-bg-variant="light"
+        class="m-2"
+        header-tag="header"
+      >
         <template #header>
-          <h6 class="mb-0" style="cursor: pointer" @click="commentFormVisible = !commentFormVisible">Add Comment</h6>
+          <h6
+            class="mb-0"
+            style="cursor: pointer"
+            @click="commentFormVisible = !commentFormVisible"
+          >
+            Add Comment
+          </h6>
         </template>
 
         <b-collapse v-model="commentFormVisible" id="form-comment-collapse">
@@ -37,38 +56,47 @@
               </b-button>
             </b-col>
           </b-row>
-          
         </b-collapse>
-
       </b-card>
-      <b-card no-body border-variant="dark" header-bg-variant="light" class="m-2" header-tag="header" v-if="issue.Comments">
-
+      <b-card
+        no-body
+        border-variant="dark"
+        header-bg-variant="light"
+        class="m-2"
+        header-tag="header"
+        v-if="issue.Comments"
+      >
         <template #header>
-          <h6 class="mb-0" style="cursor: pointer" @click="commentListVisible = !commentListVisible">Comment List ({{ issue.Comments.length }})</h6>
+          <h6
+            class="mb-0"
+            style="cursor: pointer"
+            @click="commentListVisible = !commentListVisible"
+          >
+            Comment List ({{ issue.Comments.length }})
+          </h6>
         </template>
 
         <b-collapse v-model="commentListVisible" id="comment-list-collapse">
           <div class="m-4 comment-scroller">
-            <CommentCard 
+            <CommentCard
               v-for="comment of issue.Comments"
               :key="comment.Id"
               :comment="comment"
             />
           </div>
         </b-collapse>
-
       </b-card>
     </div>
   </div>
 </template>
 
 <script>
-import FormIssue from '@/components/FormIssue'
-import FormComment from '@/components/FormComment'
-import CommentCard from '@/components/CommentCard'
-import Breadcrumb from '@/components/Breadcrumb'
-import { buildHeaders, ApiFetch } from '../lib/api-fetch'
-import { FlashHandler } from '../lib/flash-handler'
+import FormIssue from "@/components/FormIssue";
+import FormComment from "@/components/FormComment";
+import CommentCard from "@/components/CommentCard";
+import Breadcrumb from "@/components/Breadcrumb";
+import { buildHeaders, ApiFetch } from "../lib/api-fetch";
+import { FlashHandler } from "../lib/flash-handler";
 
 export default {
   components: {
@@ -82,79 +110,91 @@ export default {
     flash: new FlashHandler(),
     trail: [
       {
-        text: 'Home',
-        href: '/'
+        text: "Home",
+        href: "/"
       },
       {
-        text: 'Issues',
-        href: '/issues'
+        text: "Issues",
+        href: "/issues"
       }
     ],
     blank: {
-      Title: '',
-      Details: '',
-      Type: '',
-      Status: '',
-      Priority: '',
-      Complexity: '',
-      AssignedToId: '',
-      ProjectId: '',
+      Title: "",
+      Details: "",
+      Type: "",
+      Status: "",
+      Priority: "",
+      Complexity: "",
+      AssignedToId: "",
+      ProjectId: "",
       Comments: []
     },
     comment: {
-      Title: '',
-      Details: '',
+      Title: "",
+      Details: ""
     },
     commentFormVisible: false,
     commentListVisible: false,
     initial: {},
     issue: {},
-    uuid: null,
+    uuid: null
   }),
   methods: {
     reset() {
-      this.issue = JSON.parse(JSON.stringify(this.blank))
+      this.issue = JSON.parse(JSON.stringify(this.blank));
     },
     async loadIssue() {
-      this.$store.dispatch('loader/show')
-      const results = await this.api.getData(`issue/${this.uuid}`, {}, buildHeaders(this.session))
-      this.initial = results
-      this.issue = results
+      this.$store.dispatch("loader/show");
+      const results = await this.api.getData(
+        `issue/${this.uuid}`,
+        {},
+        buildHeaders(this.session)
+      );
+      this.initial = results;
+      this.issue = results;
       if (this.trail.length == 2) {
         this.trail.push({
           text: results.Title,
           href: `/issues/${this.uuid}`
-        })
+        });
       }
-      this.$store.dispatch('loader/hide')
+      this.$store.dispatch("loader/hide");
     },
     async saveComment() {
-      this.$store.dispatch('loader/show')
-      await this.api.postData(`issue/${this.uuid}/comment`, this.comment, buildHeaders(this.session))
-      this.comment.Title = ''
-      this.comment.Details = ''
-      this.commentListVisible = true
-      this.loadIssue()
+      this.$store.dispatch("loader/show");
+      await this.api.postData(
+        `issue/${this.uuid}/comment`,
+        this.comment,
+        buildHeaders(this.session)
+      );
+      this.comment.Title = "";
+      this.comment.Details = "";
+      this.commentListVisible = true;
+      this.loadIssue();
     },
     async update() {
-      this.$store.dispatch('loader/show')
-      const payload = JSON.parse(JSON.stringify(this.issue))
-      delete payload.Comments
+      this.$store.dispatch("loader/show");
+      const payload = JSON.parse(JSON.stringify(this.issue));
+      delete payload.Comments;
       try {
-        const results = await this.api.patchData(`issue/${this.uuid}`,payload, buildHeaders(this.session))
-        this.flash.success(`Issue ${this.issue.Title} updated`)
-        this.initial = results
-        this.issue = results
+        const results = await this.api.patchData(
+          `issue/${this.uuid}`,
+          payload,
+          buildHeaders(this.session)
+        );
+        this.flash.success(`Issue ${results.Title} updated`);
+        this.initial = results;
+        this.issue = results;
       } catch (error) {
-        this.flash.error(`Error: ${error.message} saving issue`)
+        this.flash.error(`Error: ${error.message} saving issue`);
       }
-      this.$store.dispatch('loader/hide')
+      this.$store.dispatch("loader/hide");
     }
   },
   created() {
     this.uuid = this.$route.params.uuid;
-    this.reset()
-    this.loadIssue()
+    this.reset();
+    this.loadIssue();
   },
   computed: {
     session() {
@@ -162,9 +202,9 @@ export default {
     }
   },
   mounted() {
-    this.flash.setStore(this.$store)
+    this.flash.setStore(this.$store);
   }
-}
+};
 </script>
 
 <style>

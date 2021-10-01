@@ -1,6 +1,14 @@
 <template>
   <div>
-    <b-card  border-variant="dark" header-bg-variant="light" class="mx-2 mb-2" :header="issue.Title">
+    <b-card
+      border-variant="dark"
+      header-bg-variant="light"
+      class="mx-2 mb-2"
+      :header="issue.SequenceNumber"
+    >
+      <b-card-text>
+        <h4>{{ issue.Title }}</h4>
+      </b-card-text>
 
       <b-card-text v-if="issue.Project">
         <b-row>
@@ -34,7 +42,6 @@
 
       <b-card-text>{{ issue.Details }}</b-card-text>
 
-
       <b-card-text>
         <b-row cols="1" cols-sm="2" cols-md="3" cols-lg="3" cols-xl="3">
           <b-col>
@@ -52,7 +59,7 @@
         </b-row>
       </b-card-text>
 
-      <b-button 
+      <b-button
         variant="outline-primary"
         :to="{ name: 'IssueDetail', params: { uuid: issue.UUID } }"
         size="sm"
@@ -60,28 +67,26 @@
         <b-icon icon="pencil-square"></b-icon>
         Edit
       </b-button>
-
     </b-card>
   </div>
 </template>
 
-
 <script>
-import { FullName } from '@/lib/fullname'
+import { FullName } from "@/lib/fullname";
 
 export default {
-  props: ['issue'],
+  props: ["issue"],
   data: () => ({
-    author: '',
-    assigned: ''
+    author: "",
+    assigned: ""
   }),
   mounted() {
     if (this.issue.Author && this.issue.Author.Name) {
-      this.author = FullName(this.issue.Author.Name)
+      this.author = FullName(this.issue.Author.Name);
     }
     if (this.issue.AssignedTo && this.issue.AssignedTo.Name) {
-      this.assigned = FullName(this.issue.AssignedTo.Name)
+      this.assigned = FullName(this.issue.AssignedTo.Name);
     }
   }
-}
+};
 </script>
