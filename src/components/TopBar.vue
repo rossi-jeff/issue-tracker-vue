@@ -2,7 +2,11 @@
 <div>
   <b-navbar class="px-4" type="light" variant="info" fixed="top" toggleable="lg">
     <b-navbar-brand to="/">
-      <span class="h3">Issue Tracker</span>
+      <span class="h3">
+        Issue
+        <b-icon icon="card-checklist" class="mx-1"></b-icon>
+        Tracker
+      </span>
     </b-navbar-brand>
 
     <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>

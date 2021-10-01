@@ -4,10 +4,15 @@
     role="tablist"
     style="border: solid black 1px"
   >
-    <b-card
-      no-body
-      :header="issue.SequenceNumber"
-    ></b-card>
+    <b-card no-body></b-card>
+
+    <b-card-header>
+      <b-button size="sm" style="float:right;" @click="edit">
+        <b-icon icon="pencil-square"></b-icon>
+      </b-button>
+      <h5>{{ issue.SequenceNumber }}</h5>
+      <div style="clear:right;"></div>
+    </b-card-header>
 
     <div class="p-2">{{ issue.Title }}</div>
 
@@ -101,6 +106,11 @@ export default {
     assigned: "",
     project: ""
   }),
+  methods: {
+    edit() {
+      this.$emit("edit", this.issue.UUID);
+    }
+  },
   mounted() {
     this.accordion += `-${this.issue.Id}`;
     if (this.issue.Author && this.issue.Author.Name) {
@@ -117,4 +127,9 @@ export default {
 };
 </script>
 
-<style lang="css" scoped></style>
+<style lang="css" scoped>
+h5 {
+  display: inline-block;
+  cursor: move;
+}
+</style>

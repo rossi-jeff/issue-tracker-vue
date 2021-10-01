@@ -15,6 +15,7 @@
           :session="session"
           :draggable="draggable"
           @loaded="draggableLoaded"
+          @edit="edit"
         />
       </b-card-text>
     </b-card>
@@ -49,7 +50,9 @@ export default {
     handleDrop(ev) {
       ev.preventDefault();
       const uuid = ev.dataTransfer.getData("text/plain");
-      const { status } = this;
+      const {
+        status
+      } = this;
       this.$emit("dropped", {
         uuid,
         status
@@ -63,6 +66,9 @@ export default {
       if (el && el.draggable) {
         el.addEventListener("dragstart", this.handleDragStart);
       }
+    },
+    edit(ev) {
+      this.$emit('edit', ev);
     }
   },
   mounted() {

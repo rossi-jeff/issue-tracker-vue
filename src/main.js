@@ -7,7 +7,8 @@ Vue.config.productionTip = false;
 
 import { BootstrapVue, BootstrapVueIcons } from "bootstrap-vue";
 
-import "bootstrap/dist/css/bootstrap.css";
+// import "bootstrap/dist/css/bootstrap.css";
+import "./theme/bootstrap.min.css";
 import "bootstrap-vue/dist/bootstrap-vue.css";
 
 Vue.use(BootstrapVue);

@@ -18,6 +18,7 @@
               @dropped="handleDrop"
               :session="session"
               :key="key.new"
+              @edit="editIssue"
             />
           </b-col>
           <b-col id="col-assigned">
@@ -29,6 +30,7 @@
               @dropped="handleDrop"
               :session="session"
               :key="key.assigned"
+              @edit="editIssue"
             />
           </b-col>
           <b-col id="col-accepted">
@@ -40,6 +42,7 @@
               @dropped="handleDrop"
               :session="session"
               :key="key.accepted"
+              @edit="editIssue"
             />
           </b-col>
           <b-col id="col-fixed">
@@ -51,6 +54,7 @@
               @dropped="handleDrop"
               :session="session"
               :key="key.fixed"
+              @edit="editIssue"
             />
           </b-col>
         </b-row>
@@ -63,11 +67,21 @@
               status="Other"
               :session="session"
               :key="key.other"
+              @edit="editIssue"
             />
           </b-col>
         </b-row>
       </b-card-text>
     </b-card>
+    <b-modal
+      scrollable
+      id="edit-issue-modal"
+      :title="editor.title"
+      @ok="handleOk"
+      ok-title="Update"
+    >
+      <FormModalIssue :issue="editor.issue" :enabled="session.signedIn" />
+    </b-modal>
   </div>
 </template>
 
@@ -75,13 +89,17 @@
 import DashColumn from "@/components/DashColumn";
 import Breadcrumb from "@/components/Breadcrumb";
 import { buildHeaders, ApiFetch } from "../lib/api-fetch";
+import FormModalIssue from "../components/FormModalIssue";
+import { FlashHandler } from "../lib/flash-handler";
 
 export default {
   components: {
     Breadcrumb,
-    DashColumn
+    DashColumn,
+    FormModalIssue
   },
   data: () => ({
+    flash: new FlashHandler(),
     api: new ApiFetch(),
     trail: [
       {
@@ -108,6 +126,10 @@ export default {
       accepted: 0,
       fixed: 0,
       other: 0
+    },
+    editor: {
+      title: "Edit Issue",
+      issue: {}
     }
   }),
   methods: {
@@ -211,18 +233,39 @@ export default {
             break;
         }
         this.key[from] += 1;
+        this.flash.success(`Issue: ${issue.SequenceNumber} updated`);
       }
     },
     async updateIssue(issue) {
-      await this.api.patchData(
+      return await this.api.patchData(
         `issue/${issue.uuid}`,
         issue,
         buildHeaders(this.session)
       );
+    },
+    editIssue(ev) {
+      this.editor.issue = this.issues.find(i => i.UUID == ev);
+      this.editor.title = `Edit Issue - ${this.editor.issue.SequenceNumber}`;
+      this.$bvModal.show("edit-issue-modal");
+    },
+    async handleOk(ev) {
+      ev.preventDefault();
+      const { issue } = this.editor;
+      const updated = await this.updateIssue(issue);
+
+      const idx = this.issues.findIndex(i => i.UUID == updated.UUID);
+      if (idx != -1) {
+        this.issues[idx] = updated;
+        this.sortIssues();
+        this.getIssues();
+      }
+      this.flash.success(`Issue: ${updated.SequenceNumber} updated`);
+      this.$bvModal.hide("edit-issue-modal");
     }
   },
   mounted() {
     this.getIssues();
+    this.flash.setStore(this.$store);
   },
   computed: {
     session() {
