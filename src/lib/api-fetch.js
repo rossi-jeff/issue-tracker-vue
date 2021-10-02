@@ -10,8 +10,10 @@ export const buildHeaders = (session = {}) => {
 };
 
 export class ApiFetch {
-  baseUrl = "https://issue-tracker-api-jrossi.herokuapp.com/";
-  // baseUrl = "http://localhost:4000/";
+  baseUrl =
+    process.env.NODE_ENV == "production"
+      ? "https://issue-tracker-api-jrossi.herokuapp.com/"
+      : "http://localhost:4000/";
 
   buildQueryString(obj) {
     return Object.keys(obj)

@@ -28,7 +28,7 @@
               <b-icon icon="check"></b-icon>
             </b-button>
             <b-alert show v-if="!session.signedIn" variant="warning">
-              You must be signed in to create a timecard
+              You must be signed in to create a time clock
             </b-alert>
           </b-col>
         </b-row>
@@ -38,12 +38,21 @@
 </template>
 
 <script>
-import { buildHeaders, ApiFetch } from "../lib/api-fetch";
+import {
+  buildHeaders,
+  ApiFetch
+} from "../lib/api-fetch";
 import Breadcrumb from "@/components/Breadcrumb";
-import { FlashHandler } from "../lib/flash-handler";
+import {
+  FlashHandler
+} from "../lib/flash-handler";
 import FormTimeClock from "@/components/FormTimeClock";
-import { FullName } from "../lib/fullname";
-import { userSort } from "../lib/user-sort";
+import {
+  FullName
+} from "../lib/fullname";
+import {
+  userSort
+} from "../lib/user-sort";
 
 export default {
   components: {
@@ -53,8 +62,7 @@ export default {
   data: () => ({
     api: new ApiFetch(),
     flash: new FlashHandler(),
-    trail: [
-      {
+    trail: [{
         text: "Home",
         href: "/"
       },
@@ -96,17 +104,14 @@ export default {
   methods: {
     async getProjects() {
       const results = await this.api.getData(
-        "project",
-        {},
+        "project", {},
         buildHeaders(this.session)
       );
       this.projects = results;
-      this.options.projects = [
-        {
-          value: null,
-          text: ""
-        }
-      ];
+      this.options.projects = [{
+        value: null,
+        text: ""
+      }];
       for (let project of results) {
         this.options.projects.push({
           value: project.Id,
@@ -122,12 +127,10 @@ export default {
         buildHeaders(this.session)
       );
       this.issues = results;
-      this.options.issues = [
-        {
-          value: null,
-          text: ""
-        }
-      ];
+      this.options.issues = [{
+        value: null,
+        text: ""
+      }];
       for (let issue of results) {
         this.options.issues.push({
           value: issue.Id,
@@ -138,18 +141,15 @@ export default {
     },
     async getUsers() {
       let results = await this.api.getData(
-        "user",
-        {},
+        "user", {},
         buildHeaders(this.session)
       );
       this.users = results;
       this.users.sort(userSort);
-      this.options.users = [
-        {
-          value: null,
-          text: ""
-        }
-      ];
+      this.options.users = [{
+        value: null,
+        text: ""
+      }];
       for (let user of this.users) {
         this.options.users.push({
           value: user.Id,
@@ -159,12 +159,10 @@ export default {
       this.count.users = results.length;
     },
     projectChanged() {
-      this.options.issues = [
-        {
-          value: null,
-          text: ""
-        }
-      ];
+      this.options.issues = [{
+        value: null,
+        text: ""
+      }];
       for (let issue of this.issues) {
         if (
           this.timeclock.ProjectId != null &&
@@ -181,7 +179,9 @@ export default {
         this.timeclock.IssueId = null;
     },
     issueChanged() {
-      const { IssueId } = this.timeclock;
+      const {
+        IssueId
+      } = this.timeclock;
       let issue = this.issues.find(i => i.Id == IssueId);
       if (issue) this.timeclock.ProjectId = issue.ProjectId;
     },
