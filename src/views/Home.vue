@@ -13,8 +13,8 @@
   </div>
 
   <div class="m-2 mb-4">
-    Contruction of the site used the component based framework Vue. The
-    benefit of component based framesowrks is that they make it easier to
+    Construction of the site used the component based framework Vue. The
+    benefit of using a component based framework is that it becomes easier to
     follow the DRY ( don't repeat yourself ) principle. In addition, effort
     was made not to reinvent the wheel. In so doing, the open source packages
     listed below were utilized.
@@ -28,7 +28,7 @@
         </div>
         <b-button :href="resource.Url" target="_blank" variant="outline-primary" class="mx-2">
           <b-icon icon="bookmark" class="mr-1"></b-icon>
-          Visit
+          Visit {{ resource.Name }}
         </b-button>
       </b-tab>
     </b-tabs>

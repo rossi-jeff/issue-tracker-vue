@@ -1,99 +1,104 @@
 <template lang="html">
-  <div
-    class="dash-issue accordion mx-1 mb-4 p-2"
-    role="tablist"
-    style="border: solid black 1px"
+  <b-card
+    no-body
+    border-variant="dark"
+    header-bg-variant="light"
+    class="m-2 dash-issue"
+    header-tag="header"
   >
-    <b-card no-body></b-card>
-
-    <b-card-header>
-      <b-button size="sm" style="float:right;" @click="edit">
+    <template #header>
+      <b-button size="sm" style="float:right;" @click="edit" title="Edit issue">
         <b-icon icon="pencil-square"></b-icon>
       </b-button>
-      <h5>{{ issue.SequenceNumber }}</h5>
+      <h5 @click="issueVisble = !issueVisble" title="Click to expand issue">
+        {{ issue.SequenceNumber }}
+      </h5>
       <div style="clear:right;"></div>
-    </b-card-header>
+    </template>
 
-    <div class="p-2">{{ issue.Title }}</div>
+    <b-collapse v-model="issueVisble" id="dash-issue-collapse">
+      <div class="accordion mx-1 mb-4 p-2" role="tablist">
+        <div class="p-2">{{ issue.Title }}</div>
 
-    <b-card no-body>
-      <b-card-header header-tag="header" class="p-2" role="tab">
-        <b-button
-          style="width: 100%"
-          variant="secondary"
-          @click="descriptionPanel = !descriptionPanel"
-          >Description</b-button
-        >
-        <b-collapse
-          class="description-panel p-2"
-          :accordion="accordion"
-          role="tabpanel"
-          v-model="descriptionPanel"
-        >
-          {{ issue.Details }}
-        </b-collapse>
-      </b-card-header>
-    </b-card>
-    <b-card no-body>
-      <b-card-header header-tag="header" class="p-2" role="tab">
-        <b-button
-          style="width: 100%"
-          variant="secondary"
-          @click="detailsPanel = !detailsPanel"
-          >Details</b-button
-        >
-        <b-collapse
-          class="details-panel p-2"
-          :accordion="accordion"
-          role="tabpanel"
-          v-model="detailsPanel"
-        >
-          <b-row cols="1">
-            <b-col>
-              <strong class="mr-6">Project</strong>
-              {{ project }}
-            </b-col>
-            <b-col>
-              <strong class="mr-6">Priority</strong>
-              {{ issue.Priority }}
-            </b-col>
-            <b-col>
-              <strong class="mr-6">Status</strong>
-              {{ issue.Status }}
-            </b-col>
-            <b-col>
-              <strong class="mr-6">Type</strong>
-              {{ issue.Type }}
-            </b-col>
-          </b-row>
-          <b-row cols="1">
-            <b-col>
-              <strong class="mr-6">Complexity</strong>
-              {{ issue.Complexity }}
-            </b-col>
-            <b-col>
-              <strong class="mr-6">Created</strong>
-              {{ issue.Created }}
-            </b-col>
-            <b-col>
-              <strong class="mr-6">Author</strong>
-              {{ author }}
-            </b-col>
-            <b-col>
-              <strong class="mr-6">Assigned To</strong>
-              {{ assigned }}
-            </b-col>
-          </b-row>
-        </b-collapse>
-      </b-card-header>
-    </b-card>
-  </div>
+        <b-card no-body>
+          <b-card-header header-tag="header" class="p-2" role="tab">
+            <b-button
+              style="width: 100%"
+              variant="secondary"
+              @click="descriptionPanel = !descriptionPanel"
+              >Description</b-button
+            >
+            <b-collapse
+              class="description-panel p-2"
+              :accordion="accordion"
+              role="tabpanel"
+              v-model="descriptionPanel"
+            >
+              {{ issue.Details }}
+            </b-collapse>
+          </b-card-header>
+        </b-card>
+
+        <b-card no-body>
+          <b-card-header header-tag="header" class="p-2" role="tab">
+            <b-button
+              style="width: 100%"
+              variant="secondary"
+              @click="detailsPanel = !detailsPanel"
+              >Details</b-button
+            >
+            <b-collapse
+              class="details-panel p-2"
+              :accordion="accordion"
+              role="tabpanel"
+              v-model="detailsPanel"
+            >
+              <b-row cols="1">
+                <b-col>
+                  <strong class="mr-6">Project</strong>
+                  {{ project }}
+                </b-col>
+                <b-col>
+                  <strong class="mr-6">Priority</strong>
+                  {{ issue.Priority }}
+                </b-col>
+                <b-col>
+                  <strong class="mr-6">Status</strong>
+                  {{ issue.Status }}
+                </b-col>
+                <b-col>
+                  <strong class="mr-6">Type</strong>
+                  {{ issue.Type }}
+                </b-col>
+              </b-row>
+              <b-row cols="1">
+                <b-col>
+                  <strong class="mr-6">Complexity</strong>
+                  {{ issue.Complexity }}
+                </b-col>
+                <b-col>
+                  <strong class="mr-6">Created</strong>
+                  {{ issue.Created }}
+                </b-col>
+                <b-col>
+                  <strong class="mr-6">Author</strong>
+                  {{ author }}
+                </b-col>
+                <b-col>
+                  <strong class="mr-6">Assigned To</strong>
+                  {{ assigned }}
+                </b-col>
+              </b-row>
+            </b-collapse>
+          </b-card-header>
+        </b-card>
+      </div>
+    </b-collapse>
+  </b-card>
 </template>
 
 <script>
-import {
-  FullName
-} from "@/lib/fullname";
+import { FullName } from "@/lib/fullname";
 
 export default {
   props: ["issue", "session"],
@@ -104,7 +109,8 @@ export default {
     accordion: "dash-issue-accordion",
     author: "",
     assigned: "",
-    project: ""
+    project: "",
+    issueVisble: false
   }),
   methods: {
     edit() {
@@ -130,6 +136,7 @@ export default {
 <style lang="css" scoped>
 h5 {
   display: inline-block;
-  cursor: move;
+  width: 75%;
+  cursor: pointer;
 }
 </style>
