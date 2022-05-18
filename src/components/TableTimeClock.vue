@@ -24,6 +24,11 @@
               <b-icon icon="pencil-square"></b-icon>
             </b-button>
           </template>
+          <template #cell(delete)="data">
+            <b-button @click="deleteClicked(data.value)">
+              <b-icon icon="trash"></b-icon>
+            </b-button>
+          </template>
         </b-table>
       </b-collapse>
     </b-card>
@@ -35,7 +40,12 @@ export default {
   props: ["items", "fields"],
   data: () => ({
     tableVisible: false
-  })
+  }),
+  methods: {
+    deleteClicked(UUID) {
+      this.$emit("deleteClicked", UUID);
+    }
+  }
 };
 </script>
 

@@ -93,35 +93,42 @@
         </b-collapse>
       </b-card-text>
     </b-card>
-    <TableTimeClock :items="items" :fields="fields" :key="tableKey" />
+    <TableTimeClock
+      :items="items"
+      :fields="fields"
+      :key="tableKey"
+      @deleteClicked="deleteClicked"
+    />
+
+    <ResetAlert
+      :signedIn="session.signedIn"
+      :session="session"
+      entity="timeclock"
+      @reset="resetDeleted"
+      :key="resetKey"
+    />
   </div>
 </template>
 
 <script>
-import {
-  buildHeaders,
-  ApiFetch
-} from "../lib/api-fetch";
+import { buildHeaders, ApiFetch } from "../lib/api-fetch";
 import Breadcrumb from "@/components/Breadcrumb";
-import {
-  FullName
-} from "../lib/fullname";
-import {
-  RemoveBlanks
-} from "../lib/RemoveBlanks";
-import {
-  formatDate
-} from "../lib/format-date";
+import { FullName } from "../lib/fullname";
+import { RemoveBlanks } from "../lib/RemoveBlanks";
+import { formatDate } from "../lib/format-date";
 import TableTimeClock from "@/components/TableTimeClock";
+import ResetAlert from "@/components/ResetAlert";
 
 export default {
   components: {
     Breadcrumb,
-    TableTimeClock
+    TableTimeClock,
+    ResetAlert
   },
   data: () => ({
     api: new ApiFetch(),
-    trail: [{
+    trail: [
+      {
         text: "Home",
         href: "/"
       },
@@ -153,7 +160,8 @@ export default {
       timeclocks: 0
     },
     items: [],
-    fields: [{
+    fields: [
+      {
         key: "uuid",
         label: "Edit"
       },
@@ -188,9 +196,14 @@ export default {
       {
         key: "hours",
         class: "nowrap"
+      },
+      {
+        key: "delete",
+        label: "Delete"
       }
     ],
-    tableKey: 0
+    tableKey: 0,
+    resetKey: 1000
   }),
   methods: {
     async getTimeClocks() {
@@ -205,14 +218,17 @@ export default {
     },
     async getProjects() {
       const results = await this.api.getData(
-        "project", {},
+        "project",
+        {},
         buildHeaders(this.session)
       );
       this.projects = results;
-      this.options.projects = [{
-        value: null,
-        text: ""
-      }];
+      this.options.projects = [
+        {
+          value: null,
+          text: ""
+        }
+      ];
       for (let project of results) {
         this.options.projects.push({
           value: project.Id,
@@ -228,10 +244,12 @@ export default {
         buildHeaders(this.session)
       );
       this.issues = results;
-      this.options.issues = [{
-        value: null,
-        text: ""
-      }];
+      this.options.issues = [
+        {
+          value: null,
+          text: ""
+        }
+      ];
       for (let issue of results) {
         this.options.issues.push({
           value: issue.Id,
@@ -242,14 +260,17 @@ export default {
     },
     async getUsers() {
       let results = await this.api.getData(
-        "user", {},
+        "user",
+        {},
         buildHeaders(this.session)
       );
       this.users = results;
-      this.options.users = [{
-        value: null,
-        text: ""
-      }];
+      this.options.users = [
+        {
+          value: null,
+          text: ""
+        }
+      ];
       for (let user of results) {
         this.options.users.push({
           value: user.Id,
@@ -259,10 +280,12 @@ export default {
       this.count.users = results.length;
     },
     projectChanged() {
-      this.options.issues = [{
-        value: null,
-        text: ""
-      }];
+      this.options.issues = [
+        {
+          value: null,
+          text: ""
+        }
+      ];
       for (let issue of this.issues) {
         if (
           this.filter.ProjectId != null &&
@@ -279,9 +302,7 @@ export default {
       this.getTimeClocks();
     },
     issueChanged() {
-      const {
-        IssueId
-      } = this.filter;
+      const { IssueId } = this.filter;
       let issue = this.issues.find(i => i.Id == IssueId);
       if (issue) this.filter.ProjectId = issue.ProjectId;
       this.getTimeClocks();
@@ -315,16 +336,35 @@ export default {
           start_time: clock.Start.Time,
           end_date: clock.End.Date,
           end_time: clock.End.Time,
-          hours
+          hours,
+          delete: clock.UUID
         });
       }
       // this.tableKey += 1;
+    },
+    async resetDeleted() {
+      console.log("resetDeleted");
+      try {
+        const results = await this.api.postData(
+          "timeclock/reset",
+          {},
+          buildHeaders(this.session)
+        );
+        this.timeclocks = results;
+        this.buildTableItems();
+        this.resetKey++;
+      } catch (e) {
+        console.log(e);
+      }
+    },
+    deleteClicked(UUID) {
+      console.log("deleteClicked", UUID);
     }
   },
   created() {
     const week = 7 * 24 * 60 * 60 * 1000;
     const EndDate = new Date();
-    const StartDate = new Date(EndDate.getTime() - 2 * week);
+    const StartDate = new Date(EndDate.getTime() - 12 * week);
     this.filter.StartDate = formatDate(StartDate);
     this.filter.EndDate = formatDate(EndDate);
     this.getProjects();

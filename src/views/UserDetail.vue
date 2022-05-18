@@ -1,171 +1,107 @@
 <template>
-  <div class="user-detail">
-    <Breadcrumb :trail="trail" />
+<div class="user-detail">
+  <Breadcrumb :trail="trail" />
 
-    <b-card
-      border-variant="dark"
-      header-bg-variant="light"
-      header="Edit User"
-      class="m-2"
-    >
-      <b-card-text>
-        <FormUser
-          :key="formKey"
-          :user="user"
-          :showPass="false"
-          :enabled="session.signedIn"
-          @editEmail="editEmail"
-          @deleteEmail="deleteEmail"
-          @editPhone="editPhone"
-          @deletePhone="deletePhone"
-          @addEmail="addEmail"
-          @addPhone="addPhone"
-        />
-        <b-row class="m-4">
-          <b-col>
-            <b-button
-              v-if="session.signedIn"
-              variant="outline-success"
-              @click="updateUser"
-            >
-              Update
-              <b-icon icon="check"></b-icon>
-            </b-button>
-            <b-alert show v-if="!session.signedIn" variant="warning">
-              You must be signed in to update a user
-            </b-alert>
-          </b-col>
-        </b-row>
-      </b-card-text>
-    </b-card>
+  <b-card border-variant="dark" header-bg-variant="light" header="Edit User" class="m-2">
+    <b-card-text>
+      <FormUser :key="formKey" :user="user" :showPass="false" :enabled="session.signedIn" @editEmail="editEmail" @deleteEmail="deleteEmail" @editPhone="editPhone" @deletePhone="deletePhone" @addEmail="addEmail" @addPhone="addPhone" />
+      <b-row class="m-4">
+        <b-col>
+          <b-button v-if="session.signedIn" variant="outline-success" @click="updateUser">
+            Update
+            <b-icon icon="check"></b-icon>
+          </b-button>
+          <b-alert show v-if="!session.signedIn" variant="warning">
+            You must be signed in to update a user
+          </b-alert>
+        </b-col>
+      </b-row>
+    </b-card-text>
+  </b-card>
 
-    <TableTimeClock :items="items" :fields="fields" />
+  <TableTimeClock :items="items" :fields="fields" />
 
-    <b-modal
-      id="edit-email-modal"
-      ref="edit-email-modal"
-      title="Edit Email"
-      header-bg-variant="primary"
-      ok-title="Update"
-      @ok="emailOK"
-    >
-      <form ref="edit-email-form">
-        <div class="m-4">
-          <b-input-group prepend="Address">
-            <b-form-input
-              v-model="editor.email.Address"
-              type="email"
-            ></b-form-input>
-          </b-input-group>
-        </div>
-        <div class="m-4">
-          <b-form-group label="Usage">
-            <b-form-radio
-              value="Personal"
-              v-model="editor.email.Usage"
-              name="email-usage"
-            >
-              Personal
-            </b-form-radio>
-            <b-form-radio
-              value="Business"
-              v-model="editor.email.Usage"
-              name="email-usage"
-            >
-              Business
-            </b-form-radio>
-          </b-form-group>
-        </div>
-        <div class="m-4">
-          <b-form-group label="Display">
-            <b-form-checkbox
-              id="email-public"
-              v-model="editor.email.Public"
-              name="email-public"
-              :value="true"
-              :unchecked-value="false"
-            >
-              Public
-            </b-form-checkbox>
-          </b-form-group>
-        </div>
-      </form>
-    </b-modal>
-    <b-modal
-      id="edit-phone-modal"
-      ref="edit-phone-modal"
-      title="Edit Phone"
-      header-bg-variant="primary"
-      ok-title="Update"
-      @ok="phoneOK"
-    >
-      <form ref="edit-phone-form">
-        <div class="m-4">
-          <b-input-group prepend="Number">
-            <b-form-input v-model="editor.phone.Number"></b-form-input>
-          </b-input-group>
-        </div>
-        <div class="m-4">
-          <b-form-group label="Type">
-            <b-form-radio
-              value="Cellular"
-              v-model="editor.phone.Type"
-              name="phone-type"
-            >
-              Cellular
-            </b-form-radio>
-            <b-form-radio
-              value="LandLine"
-              v-model="editor.phone.Type"
-              name="phone-type"
-            >
-              LandLine
-            </b-form-radio>
-          </b-form-group>
-        </div>
-        <div class="m-4">
-          <b-form-group label="Usage">
-            <b-form-radio
-              value="Personal"
-              v-model="editor.phone.Usage"
-              name="phone-usage"
-            >
-              Personal
-            </b-form-radio>
-            <b-form-radio
-              value="Business"
-              v-model="editor.phone.Usage"
-              name="phone-usage"
-            >
-              Business
-            </b-form-radio>
-          </b-form-group>
-        </div>
-        <div class="m-4">
-          <b-form-group label="Display">
-            <b-form-checkbox
-              id="phone-public"
-              v-model="editor.phone.Public"
-              name="phone-public"
-              :value="true"
-              :unchecked-value="false"
-            >
-              Public
-            </b-form-checkbox>
-          </b-form-group>
-        </div>
-      </form>
-    </b-modal>
-  </div>
+  <b-modal id="edit-email-modal" ref="edit-email-modal" title="Edit Email" header-bg-variant="primary" ok-title="Update" @ok="emailOK">
+    <form ref="edit-email-form">
+      <div class="m-4">
+        <b-input-group prepend="Address">
+          <b-form-input v-model="editor.email.Address" type="email"></b-form-input>
+        </b-input-group>
+      </div>
+      <div class="m-4">
+        <b-form-group label="Usage">
+          <b-form-radio value="Personal" v-model="editor.email.Usage" name="email-usage">
+            Personal
+          </b-form-radio>
+          <b-form-radio value="Business" v-model="editor.email.Usage" name="email-usage">
+            Business
+          </b-form-radio>
+        </b-form-group>
+      </div>
+      <div class="m-4">
+        <b-form-group label="Display">
+          <b-form-checkbox id="email-public" v-model="editor.email.Public" name="email-public" :value="true" :unchecked-value="false">
+            Public
+          </b-form-checkbox>
+        </b-form-group>
+      </div>
+    </form>
+  </b-modal>
+  <b-modal id="edit-phone-modal" ref="edit-phone-modal" title="Edit Phone" header-bg-variant="primary" ok-title="Update" @ok="phoneOK">
+    <form ref="edit-phone-form">
+      <div class="m-4">
+        <b-input-group prepend="Number">
+          <b-form-input v-model="editor.phone.Number"></b-form-input>
+        </b-input-group>
+      </div>
+      <div class="m-4">
+        <b-form-group label="Type">
+          <b-form-radio value="Cellular" v-model="editor.phone.Type" name="phone-type">
+            Cellular
+          </b-form-radio>
+          <b-form-radio value="LandLine" v-model="editor.phone.Type" name="phone-type">
+            LandLine
+          </b-form-radio>
+        </b-form-group>
+      </div>
+      <div class="m-4">
+        <b-form-group label="Usage">
+          <b-form-radio value="Personal" v-model="editor.phone.Usage" name="phone-usage">
+            Personal
+          </b-form-radio>
+          <b-form-radio value="Business" v-model="editor.phone.Usage" name="phone-usage">
+            Business
+          </b-form-radio>
+        </b-form-group>
+      </div>
+      <div class="m-4">
+        <b-form-group label="Display">
+          <b-form-checkbox id="phone-public" v-model="editor.phone.Public" name="phone-public" :value="true" :unchecked-value="false">
+            Public
+          </b-form-checkbox>
+        </b-form-group>
+      </div>
+    </form>
+  </b-modal>
+</div>
 </template>
 
 <script>
-import { buildHeaders, ApiFetch } from "../lib/api-fetch";
+import {
+  buildHeaders,
+  ApiFetch
+} from "../lib/api-fetch";
 import FormUser from "@/components/FormUser";
 import Breadcrumb from "@/components/Breadcrumb";
-import { FullName } from "../lib/fullname";
-import { FlashHandler } from "../lib/flash-handler";
-import { RoleArray } from "../lib/options";
+import {
+  FullName
+} from "../lib/fullname";
+import {
+  FlashHandler
+} from "../lib/flash-handler";
+import {
+  RoleArray
+} from "../lib/options";
 import TableTimeClock from "@/components/TableTimeClock";
 
 export default {
@@ -177,8 +113,7 @@ export default {
   data: () => ({
     api: new ApiFetch(),
     flash: new FlashHandler(),
-    trail: [
-      {
+    trail: [{
         text: "Home",
         href: "/"
       },
@@ -225,8 +160,7 @@ export default {
     RoleArray,
     timeclocks: [],
     items: [],
-    fields: [
-      {
+    fields: [{
         key: "uuid",
         label: "Edit"
       },
@@ -261,6 +195,10 @@ export default {
       {
         key: "hours",
         class: "nowrap"
+      },
+      {
+        key: "delete",
+        label: "Delete"
       }
     ]
   }),
@@ -271,8 +209,7 @@ export default {
     async getUser() {
       this.$store.dispatch("loader/show");
       const results = await this.api.getData(
-        `user/${this.uuid}`,
-        {},
+        `user/${this.uuid}`, {},
         buildHeaders({})
       );
       this.initial = results;
@@ -296,8 +233,7 @@ export default {
         this.$store.dispatch("loader/show");
         try {
           await this.api.deleteData(
-            `email/${event.email.UUID}`,
-            {},
+            `email/${event.email.UUID}`, {},
             buildHeaders(this.session)
           );
         } catch (e) {
@@ -317,8 +253,7 @@ export default {
         this.$store.dispatch("loader/show");
         try {
           await this.api.deleteData(
-            `phone/${event.phone.UUID}`,
-            {},
+            `phone/${event.phone.UUID}`, {},
             buildHeaders(this.session)
           );
         } catch (e) {
@@ -413,8 +348,7 @@ export default {
     async getTimeclocks() {
       try {
         const results = await this.api.getData(
-          `user/${this.uuid}/timeclock`,
-          {},
+          `user/${this.uuid}/timeclock`, {},
           buildHeaders(this.session)
         );
         this.timeclocks = results;
@@ -452,7 +386,8 @@ export default {
           start_time: clock.Start.Time,
           end_date: clock.End.Date,
           end_time: clock.End.Time,
-          hours
+          hours,
+          delete: clock.UUID
         });
       }
       // this.tableKey += 1;

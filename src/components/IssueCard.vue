@@ -1,85 +1,90 @@
 <template>
-  <div>
-    <b-card
-      border-variant="dark"
-      header-bg-variant="light"
-      class="mx-2 mb-2"
-      :header="issue.SequenceNumber"
-    >
-      <b-card-text>
-        <h4>{{ issue.Title }}</h4>
-      </b-card-text>
+<div>
+  <b-card border-variant="dark" header-bg-variant="light" class="mx-2 mb-2" :header="issue.SequenceNumber">
+    <b-card-text>
+      <h4>{{ issue.Title }}</h4>
+    </b-card-text>
 
-      <b-card-text v-if="issue.Project">
-        <b-row>
-          <b-col>
-            <strong class="mr-6">Project</strong>
-            {{ issue.Project.Name }}
-          </b-col>
-        </b-row>
-      </b-card-text>
+    <b-card-text v-if="issue.Project">
+      <b-row>
+        <b-col>
+          <strong class="mr-6">Project</strong>
+          {{ issue.Project.Name }}
+        </b-col>
+      </b-row>
+    </b-card-text>
 
-      <b-card-text>
-        <b-row cols="1" cols-sm="2" cols-md="4" cols-lg="4" cols-xl="4">
-          <b-col>
-            <strong class="mr-6">Priority</strong>
-            {{ issue.Priority }}
-          </b-col>
-          <b-col>
-            <strong class="mr-6">Status</strong>
-            {{ issue.Status }}
-          </b-col>
-          <b-col>
-            <strong class="mr-6">Type</strong>
-            {{ issue.Type }}
-          </b-col>
-          <b-col>
-            <strong class="mr-6">Complexity</strong>
-            {{ issue.Complexity }}
-          </b-col>
-        </b-row>
-      </b-card-text>
+    <b-card-text>
+      <b-row cols="1" cols-sm="2" cols-md="4" cols-lg="4" cols-xl="4">
+        <b-col>
+          <strong class="mr-6">Priority</strong>
+          {{ issue.Priority }}
+        </b-col>
+        <b-col>
+          <strong class="mr-6">Status</strong>
+          {{ issue.Status }}
+        </b-col>
+        <b-col>
+          <strong class="mr-6">Type</strong>
+          {{ issue.Type }}
+        </b-col>
+        <b-col>
+          <strong class="mr-6">Complexity</strong>
+          {{ issue.Complexity }}
+        </b-col>
+      </b-row>
+    </b-card-text>
 
-      <b-card-text>{{ issue.Details }}</b-card-text>
+    <b-card-text>{{ issue.Details }}</b-card-text>
 
-      <b-card-text>
-        <b-row cols="1" cols-sm="2" cols-md="3" cols-lg="3" cols-xl="3">
-          <b-col>
-            <strong class="mr-6">Created</strong>
-            {{ issue.Created }}
-          </b-col>
-          <b-col>
-            <strong class="mr-6">Author</strong>
-            {{ author }}
-          </b-col>
-          <b-col>
-            <strong class="mr-6">Assigned To</strong>
-            {{ assigned }}
-          </b-col>
-        </b-row>
-      </b-card-text>
+    <b-card-text>
+      <b-row cols="1" cols-sm="2" cols-md="3" cols-lg="3" cols-xl="3">
+        <b-col>
+          <strong class="mr-6">Created</strong>
+          {{ issue.Created }}
+        </b-col>
+        <b-col>
+          <strong class="mr-6">Author</strong>
+          {{ author }}
+        </b-col>
+        <b-col>
+          <strong class="mr-6">Assigned To</strong>
+          {{ assigned }}
+        </b-col>
+      </b-row>
+    </b-card-text>
 
-      <b-button
-        variant="outline-primary"
-        :to="{ name: 'IssueDetail', params: { uuid: issue.UUID } }"
-        size="sm"
-      >
-        <b-icon icon="pencil-square"></b-icon>
-        Edit
-      </b-button>
-    </b-card>
-  </div>
+    <b-button variant="outline-primary" :to="{ name: 'IssueDetail', params: { uuid: issue.UUID } }" size="sm">
+      <b-icon icon="pencil-square"></b-icon>
+      Edit
+    </b-button>
+    <b-button variant="outline-danger" size="sm" class="float-end" v-if="session.signedIn" @click="deleteClicked">
+      Delete
+      <b-icon icon="trash"></b-icon>
+    </b-button>
+  </b-card>
+</div>
 </template>
 
 <script>
-import { FullName } from "@/lib/fullname";
+import {
+  FullName
+} from "@/lib/fullname";
 
 export default {
-  props: ["issue"],
+  props: ["issue", "session"],
   data: () => ({
     author: "",
     assigned: ""
   }),
+  methods: {
+    deleteClicked() {
+      const {
+        UUID
+      } = this.issue;
+      this.$emit("deleteClicked", UUID);
+    }
+  },
   mounted() {
     if (this.issue.Author && this.issue.Author.Name) {
       this.author = FullName(this.issue.Author.Name);

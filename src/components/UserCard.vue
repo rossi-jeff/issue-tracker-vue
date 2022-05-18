@@ -17,6 +17,11 @@
       Edit
     </b-button>
 
+    <b-button variant="outline-danger" size="sm" class="float-end" v-if="session.signedIn" @click="deleteClicked">
+      Delete
+      <b-icon icon="trash"></b-icon>
+    </b-button>
+
   </b-card>
 </div>
 </template>
@@ -27,10 +32,18 @@ import {
 } from '@/lib/fullname'
 
 export default {
-  props: ['user'],
+  props: ['user', 'session'],
   data: () => ({
     name: ''
   }),
+  methods: {
+    deleteClicked() {
+      const {
+        UUID
+      } = this.user;
+      this.$emit("deleteClicked", UUID);
+    }
+  },
   mounted() {
     this.name = FullName(this.user.Name)
   }

@@ -55,8 +55,21 @@
     </b-card>
 
     <div style="max-height: 500px; overflow-y: auto;">
-      <UserCard v-for="(user, index) of users" :key="index" :user="user" />
+      <UserCard
+        v-for="user of users"
+        :key="user.Id"
+        :user="user"
+        :session="session"
+        @deleteClicked="deleteClicked"
+      />
     </div>
+
+    <ResetAlert
+      :signedIn="session.signedIn"
+      entity="user"
+      @reset="resetDeleted"
+      :key="resetKey"
+    />
   </div>
 </template>
 
@@ -64,11 +77,14 @@
 import { buildHeaders, ApiFetch } from "../lib/api-fetch";
 import UserCard from "@/components/UserCard";
 import Breadcrumb from "@/components/Breadcrumb";
+import ResetAlert from "@/components/ResetAlert";
+import { FullName } from "@/lib/fullname";
 
 export default {
   components: {
     UserCard,
-    Breadcrumb
+    Breadcrumb,
+    ResetAlert
   },
   data: () => ({
     api: new ApiFetch(),
@@ -85,7 +101,8 @@ export default {
     path: "user",
     Term: "",
     users: [],
-    count: 0
+    count: 0,
+    resetKey: 0
   }),
   methods: {
     async getUsers() {
@@ -100,6 +117,43 @@ export default {
       this.count = results.length;
       console.log(results[0]);
       this.$store.dispatch("loader/hide");
+    },
+    async resetDeleted() {
+      try {
+        const results = await this.api.postData(
+          "user/reset",
+          {},
+          buildHeaders(this.session)
+        );
+        this.users = results;
+        this.count = results.length;
+        this.resetKey++;
+      } catch (e) {
+        console.log(e);
+      }
+    },
+    deleteClicked(UUID) {
+      const user = this.users.find(u => u.UUID === UUID);
+      if (confirm(`Delete user "${FullName(user.Name)}"?`)) {
+        this.deleteUser(UUID);
+      }
+    },
+    async deleteUser(UUID) {
+      try {
+        await this.api.deleteData(
+          `user/${UUID}`,
+          {},
+          buildHeaders(this.session)
+        );
+        const idx = this.users.findIndex(u => u.UUID === UUID);
+        if (idx !== -1) {
+          console.log("deleteUser", UUID, idx);
+          this.users.splice(idx, 1);
+          this.resetKey++;
+        }
+      } catch (e) {
+        console.log(e);
+      }
     }
   },
   mounted() {

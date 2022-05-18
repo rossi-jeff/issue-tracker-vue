@@ -84,8 +84,10 @@
   </b-card>
 
   <div style="max-height: 500px; overflow-y: auto;">
-    <IssueCard v-for="(issue, index) of issues" :key="index" :issue="issue" />
+    <IssueCard v-for="issue of issues" :key="issue.UUID" :issue="issue" :session="session" @deleteClicked="deleteClicked" />
   </div>
+
+  <ResetAlert :signedIn="session.signedIn" :session="session" entity="issue" @reset="resetDeleted" :key="resetKey" />
 </div>
 </template>
 
@@ -108,11 +110,13 @@ import {
   userSort
 } from "../lib/user-sort";
 import Breadcrumb from "@/components/Breadcrumb";
+import ResetAlert from "@/components/ResetAlert";
 
 export default {
   components: {
     IssueCard,
-    Breadcrumb
+    Breadcrumb,
+    ResetAlert
   },
   data: () => ({
     api: new ApiFetch(),
@@ -141,7 +145,8 @@ export default {
     issues: [],
     authors: [],
     assigned: [],
-    count: 0
+    count: 0,
+    resetKey: 0
   }),
   methods: {
     async getIssues() {
@@ -220,6 +225,41 @@ export default {
       this.AuthorId = null;
       this.AssignedToId = null;
       this.getIssues();
+    },
+    async resetDeleted() {
+      console.log("resetDeleted");
+      try {
+        const results = await this.api.postData(
+          "issue/reset", {},
+          buildHeaders(this.session)
+        );
+        this.issues = results;
+        this.count = results.length;
+        this.resetKey++;
+      } catch (e) {
+        console.log(e);
+      }
+    },
+    deleteClicked(UUID) {
+      const issue = this.issues.find(i => i.UUID === UUID);
+      if (confirm(`Delete issue "${issue.Title}"?`)) {
+        this.deleteIssue(UUID);
+      }
+    },
+    async deleteIssue(UUID) {
+      try {
+        await this.api.deleteData(
+          `issue/${UUID}`, {},
+          buildHeaders(this.session)
+        );
+        const idx = this.issues.findIndex(p => p.UUID === UUID);
+        if (idx !== -1) {
+          this.issues.splice(idx, 1);
+          this.resetKey++;
+        }
+      } catch (e) {
+        console.log(e);
+      }
     }
   },
   mounted() {
